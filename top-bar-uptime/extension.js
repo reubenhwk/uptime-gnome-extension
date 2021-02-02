@@ -64,13 +64,6 @@ function Utf8ArrayToStr(array) {
 class Extension {
 	constructor() {
 		log('uptime extension constructor');
-
-		let stuff = Utf8ArrayToStr(GLib.spawn_command_line_sync("cat /proc/uptime")[1]);
-		log('uptime is ' + stuff);
-		label = new St.Bin({ style_class: 'panel-label' });
-		let text = new St.Label({ text: stuff });
-
-		label.set_child(text);
 	}
 
 	redraw() {
@@ -78,7 +71,7 @@ class Extension {
 			Main.panel._rightBox.remove_child(label);
 		}
 
-		let stuff = Utf8ArrayToStr(GLib.spawn_command_line_sync("cat /proc/uptime")[1]);
+		let stuff = Utf8ArrayToStr(GLib.spawn_command_line_sync("uptime")[1]);
 		log('uptime is ' + stuff);
 		label = new St.Bin({ style_class: 'panel-label' });
 		let text = new St.Label({ text: stuff, style_class: 'uptime-style' });
