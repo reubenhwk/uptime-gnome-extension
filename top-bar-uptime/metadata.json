@@ -1,0 +1,8 @@
+{
+  "name": "uptime",
+  "description": "Shows system uptime",
+  "uuid": "top-bar-uptime",
+  "shell-version": [
+    "3.36"
+  ]
+}
