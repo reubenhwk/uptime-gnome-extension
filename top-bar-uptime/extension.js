@@ -22,8 +22,10 @@ const St = imports.gi.St;
 const Main = imports.ui.main;
 const Tweener = imports.ui.tweener;
 const GLib = imports.gi.GLib;
+const Mainloop = imports.mainloop;
 
 var label;
+var mloop;
 
 function Utf8ArrayToStr(array) {
     let out, i, len, c;
@@ -71,20 +73,43 @@ class Extension {
 		label.set_child(text);
 	}
 
-	enable() {
-		log('uptime extension enable');
+	redraw() {
+		if (label) {
+			Main.panel._rightBox.remove_child(label);
+		}
+
 		let stuff = Utf8ArrayToStr(GLib.spawn_command_line_sync("cat /proc/uptime")[1]);
 		log('uptime is ' + stuff);
 		label = new St.Bin({ style_class: 'panel-label' });
-		let text = new St.Label({ text: stuff });
+		let text = new St.Label({ text: stuff, style_class: 'uptime-style' });
 
 		label.set_child(text);
 		Main.panel._rightBox.insert_child_at_index(label, 0);
 	}
 
+	tick() {
+		log('uptime extension mloop');
+		this.startTicking();
+	}
+
+	startTicking() {
+		mloop = Mainloop.timeout_add_seconds(1, () => {
+			this.redraw();
+			this.tick();
+		})
+	}
+
+	enable() {
+		log('uptime extension enable');
+		this.redraw();
+		this.startTicking();
+	}
+
 	disable() {
 		log('uptime extension disable');
-		Main.panel._rightBox.remove_child(label);
+		if (label) {
+			Main.panel._rightBox.remove_child(label);
+		}
 	}
 }
 
