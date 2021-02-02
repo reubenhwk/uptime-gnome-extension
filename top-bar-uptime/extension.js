@@ -61,6 +61,16 @@ function Utf8ArrayToStr(array) {
     return out;
 }
 
+function readFile(filename) {
+	log("Reading " + filename);
+	return String(GLib.file_get_contents(filename)[1]);
+}
+
+function uptime_in_seconds() {
+	let uptime_file_contents = readFile('/proc/uptime');
+	return parseInt(uptime_file_contents);
+}
+
 class Extension {
 	constructor() {
 		log('uptime extension constructor');
@@ -71,10 +81,9 @@ class Extension {
 			Main.panel._rightBox.remove_child(label);
 		}
 
-		let stuff = Utf8ArrayToStr(GLib.spawn_command_line_sync("uptime")[1]);
-		log('uptime is ' + stuff);
+		let uptime = "uptime: " + (uptime_in_seconds() / 3600).toFixed(2) + " hours";
 		label = new St.Bin({ style_class: 'panel-label' });
-		let text = new St.Label({ text: stuff, style_class: 'uptime-style' });
+		let text = new St.Label({ text: uptime, style_class: 'uptime-style' });
 
 		label.set_child(text);
 		Main.panel._rightBox.insert_child_at_index(label, 0);
@@ -86,7 +95,7 @@ class Extension {
 	}
 
 	startTicking() {
-		mloop = Mainloop.timeout_add_seconds(1, () => {
+		mloop = Mainloop.timeout_add_seconds(15, () => {
 			this.redraw();
 			this.tick();
 		})
