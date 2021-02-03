@@ -72,15 +72,15 @@ function uptime_in_seconds() {
 }
 
 function round_down_to_string(n) {
-	return (n-0.5).toFixed(0).toString();
+	return Math.floor(n).toString();
 }
 
 function human_friendly_uptime() {
 	let s = uptime_in_seconds();
-	let m = s / 60;
-	let h = s / (60 * 60);
-	let d = s / (60 * 60 * 24);
-	let y = s / (60 * 60 * 24 * 365);
+	let m = Math.floor(s / 60);
+	let h = Math.floor(s / (60 * 60));
+	let d = Math.floor(s / (60 * 60 * 24));
+	let y = Math.floor(s / (60 * 60 * 24 * 365));
 
 	if (y >= 1) {
 		let sec_per_unit = 60 * 60 * 24 * 365;
