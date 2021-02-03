@@ -81,27 +81,47 @@ function human_friendly_uptime() {
 	let h = s / (60 * 60);
 	let d = s / (60 * 60 * 24);
 	let y = s / (60 * 60 * 24 * 365);
-	if (y == 1)
-		return [round_down_to_string(y) + " year", 3600];
-	if (y > 1)
-		return [round_down_to_string(y) + " years", 3600];
-	if (d == 1)
-		return [round_down_to_string(d) + " day", 3600];
-	if (d > 1)
-		return [round_down_to_string(d) + " days", 3600];
-	if (h == 1)
-		return [round_down_to_string(h) + " hour", 300];
-	if (h > 1)
-		return [round_down_to_string(h) + " hours", 300];
-	if (m == 1)
-		return [round_down_to_string(m) + " minute", 60];
-	if (m > 1)
-		return [round_down_to_string(m) + " minutes", 60];
-	if (s == 1)
-		return [round_down_to_string(s) + " second", 1];
-	if (s > 1)
-		return [round_down_to_string(s) + " seconds", 1];
-	return ["0", 1];
+
+	if (y >= 1) {
+		let sec_per_unit = 60 * 60 * 24 * 365;
+		let next_timeout = sec_per_unit - (s % sec_per_unit) + 1;
+		if (y == 1)
+			return [round_down_to_string(y) + " year", next_timeout, s];
+		if (y > 1)
+			return [round_down_to_string(y) + " years", next_timeout, s];
+	}
+	if (d >= 1) {
+		let sec_per_unit = 60 * 60 * 24;
+		let next_timeout = sec_per_unit - (s % sec_per_unit) + 1;
+		if (d == 1)
+			return [round_down_to_string(d) + " day", next_timeout, s];
+		if (d > 1)
+			return [round_down_to_string(d) + " days", next_timeout, s];
+	}
+	if (h >= 1) {
+		let sec_per_unit = 60 * 60;
+		let next_timeout = sec_per_unit - (s % sec_per_unit) + 1;
+		if (h == 1)
+			return [round_down_to_string(h) + " hour", next_timeout, s];
+		if (h > 1)
+			return [round_down_to_string(h) + " hours", next_timeout, s];
+	}
+	if (m >= 1) {
+		let sec_per_unit = 60;
+		let next_timeout = sec_per_unit - (s % sec_per_unit) + 1;
+		if (m == 1)
+			return [round_down_to_string(m) + " minute", next_timeout, s];
+		if (m > 1)
+			return [round_down_to_string(m) + " minutes", next_timeout, s];
+	}
+	if (s >= 1) {
+		if (s == 1)
+			return [round_down_to_string(s) + " second", 1, s];
+		if (s > 1)
+			return [round_down_to_string(s) + " seconds", 1, s];
+	}
+
+	return ["0", 1, s];
 }
 
 class Extension {
