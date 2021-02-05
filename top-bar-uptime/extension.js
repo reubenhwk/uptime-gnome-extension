@@ -23,6 +23,7 @@ const Main = imports.ui.main;
 const Tweener = imports.ui.tweener;
 const GLib = imports.gi.GLib;
 const Mainloop = imports.mainloop;
+const ByteArray = imports.byteArray;
 
 var label;
 var mloop;
@@ -63,7 +64,7 @@ function Utf8ArrayToStr(array) {
 
 function readFile(filename) {
 	log("Reading " + filename);
-	return String(GLib.file_get_contents(filename)[1]);
+	return ByteArray.toString(GLib.file_get_contents(filename)[1]);
 }
 
 function uptime_in_seconds() {
