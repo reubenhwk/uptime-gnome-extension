@@ -78,6 +78,7 @@ function round_down_to_string(n) {
 
 function human_friendly_uptime() {
 	let s = uptime_in_seconds();
+	log("Uptime is " + s + " seconds");
 	let m = Math.floor(s / 60);
 	let h = Math.floor(s / (60 * 60));
 	let d = Math.floor(s / (60 * 60 * 24));
