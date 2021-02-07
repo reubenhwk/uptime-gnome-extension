@@ -16,6 +16,7 @@ install: $(EXTZIP)
 	gnome-extensions install --force $(EXTZIP)
 	gnome-extensions enable $(EXTNAME)
 	#gnome-shell --replace
+	#gsettings set org.gnome.shell disable-user-extensions false
 
 clean:
 	rm -f $(EXTZIP)

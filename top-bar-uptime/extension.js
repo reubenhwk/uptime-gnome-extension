@@ -28,6 +28,8 @@ const ByteArray = imports.byteArray;
 var label;
 var mloop;
 
+log('Loading top bar uptime extension.');
+
 function Utf8ArrayToStr(array) {
     let out, i, len, c;
     let char2, char3;
