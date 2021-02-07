@@ -147,21 +147,20 @@ class Extension {
 		return now[1];
 	}
 
-	tick(timeout) {
-		timeout = this.redraw();
+	tick() {
+		let timeout = this.redraw();
 		log('Reset timeout to ' + timeout + ' seconds.');
 		this.setTimer(timeout);
 	}
 
 	setTimer(timeout) {
 		mloop = Mainloop.timeout_add_seconds(timeout, () => {
-			this.tick(timeout);
+			this.tick();
 		})
 	}
 
 	enable() {
 		log('uptime extension enable');
-		this.redraw();
 		this.setTimer(0);
 	}
 
