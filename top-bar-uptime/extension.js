@@ -25,7 +25,7 @@ const GLib = imports.gi.GLib;
 const Mainloop = imports.mainloop;
 const ByteArray = imports.byteArray;
 
-var label;
+var stbin;
 var event_id;
 
 function Utf8ArrayToStr(array) {
@@ -131,19 +131,12 @@ class Extension {
 	}
 
 	redraw() {
-		if (label) {
-			Main.panel._rightBox.remove_child(label);
-		}
-
 		let now = human_friendly_uptime();
 		let uptime = "uptime: " + now[0];
 		log('updating top bar uptime to "' + uptime + '"');
-		label = new St.Bin({ style_class: 'panel-label' });
-		let text = new St.Label({ text: uptime, style_class: 'uptime-style' });
-
-		label.set_child(text);
-		Main.panel._rightBox.insert_child_at_index(label, 0);
-
+		stbin.set_child(
+			new St.Label({ text: uptime, style_class: 'uptime-style' })
+		);
 		return now[1];
 	}
 
@@ -162,19 +155,19 @@ class Extension {
 
 	enable() {
 		log('uptime extension enable');
-		this.setTimer(0);
+		log('adding uptime st.bin');
+		stbin = new St.Bin({ style_class: 'panel-label' });
+		Main.panel._rightBox.insert_child_at_index(stbin, 0);
+		let timeout = this.redraw();
+		this.setTimer(timeout);
 	}
 
 	disable() {
-		log('uptime extension disable');
-		if (label) {
-			log('removed uptime label');
-			Main.panel._rightBox.remove_child(label);
-		}
-		if (event_id) {
-			log('removed uptime timeout event id ' + event_id);
-			Mainloop.remote_timeout(event_id);
-		}
+		log('disabling uptime extension');
+		log('removing uptime timeout event id ' + event_id);
+		Mainloop.remote_timeout(event_id);
+		log('removing uptime st.bin');
+		Main.panel._rightBox.remove_child(stbin);
 	}
 }
 
