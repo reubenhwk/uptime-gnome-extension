@@ -26,7 +26,7 @@ const Mainloop = imports.mainloop;
 const ByteArray = imports.byteArray;
 
 var label;
-var mloop;
+var event_id;
 
 function Utf8ArrayToStr(array) {
     let out, i, len, c;
@@ -149,14 +149,15 @@ class Extension {
 
 	tick() {
 		let timeout = this.redraw();
-		log('Reset timeout to ' + timeout + ' seconds.');
 		this.setTimer(timeout);
+		return false
 	}
 
 	setTimer(timeout) {
-		mloop = Mainloop.timeout_add_seconds(timeout, () => {
+		event_id = Mainloop.timeout_add_seconds(timeout, () => {
 			this.tick();
 		})
+		log('Reset timeout to ' + timeout + ' seconds. Event ID is ' + event_id);
 	}
 
 	enable() {
@@ -167,7 +168,12 @@ class Extension {
 	disable() {
 		log('uptime extension disable');
 		if (label) {
+			log('removed uptime label');
 			Main.panel._rightBox.remove_child(label);
+		}
+		if (event_id) {
+			log('removed uptime timeout event id ' + event_id);
+			Mainloop.remote_timeout(event_id);
 		}
 	}
 }
