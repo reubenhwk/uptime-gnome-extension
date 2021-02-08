@@ -77,7 +77,7 @@ function round_down_to_string(n) {
 
 function human_friendly_uptime() {
 	let s = uptime_in_seconds();
-	log("Uptime is " + s + " seconds");
+	log("uptime is " + s + " seconds");
 	let m = Math.floor(s / 60);
 	let h = Math.floor(s / (60 * 60));
 	let d = Math.floor(s / (60 * 60 * 24));
@@ -150,11 +150,11 @@ class Extension {
 		event_id = Mainloop.timeout_add_seconds(timeout, () => {
 			this.tick();
 		})
-		log('Reset timeout to ' + timeout + ' seconds. Event ID is ' + event_id);
+		log('reset timeout to ' + timeout + ' seconds, event ID is ' + event_id);
 	}
 
 	enable() {
-		log('uptime extension enable');
+		log('enabling uptime extension');
 		log('adding uptime st.bin');
 		stbin = new St.Bin({ style_class: 'panel-label' });
 		Main.panel._rightBox.insert_child_at_index(stbin, 0);
@@ -165,7 +165,7 @@ class Extension {
 	disable() {
 		log('disabling uptime extension');
 		log('removing uptime timeout event id ' + event_id);
-		Mainloop.remote_timeout(event_id);
+		Mainloop.source_remove(event_id);
 		log('removing uptime st.bin');
 		Main.panel._rightBox.remove_child(stbin);
 	}
