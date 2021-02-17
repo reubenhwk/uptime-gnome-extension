@@ -20,7 +20,6 @@
 
 const St = imports.gi.St;
 const Main = imports.ui.main;
-const Tweener = imports.ui.tweener;
 const GLib = imports.gi.GLib;
 const Mainloop = imports.mainloop;
 const ByteArray = imports.byteArray;
