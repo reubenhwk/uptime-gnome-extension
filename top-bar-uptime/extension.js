@@ -70,55 +70,55 @@ function uptime_in_seconds() {
 	return parseInt(uptime_file_contents);
 }
 
-function round_down_to_string(n) {
-	return Math.floor(n).toString();
+function format_uptime(s, v, sec_per_unit, unit, plural_unit) {
+	let next_timeout = sec_per_unit - (s % sec_per_unit);
+	if (v == 1)
+		return [v.toString() + " " + unit, next_timeout, s];
+	return [v.toString() + " " + plural_unit, next_timeout, s];
 }
 
 function human_friendly_uptime() {
 	let s = uptime_in_seconds();
 	log("uptime is " + s + " seconds");
-	let m = Math.floor(s / 60);
-	let h = Math.floor(s / (60 * 60));
-	let d = Math.floor(s / (60 * 60 * 24));
-	let y = Math.floor(s / (60 * 60 * 24 * 365));
+
+	let sec_per_minute = 60;
+	let m = Math.floor(s / sec_per_minute);
+
+	let sec_per_hour = 60 * 60;
+	let h = Math.floor(s / sec_per_hour);
+
+	let sec_per_day = 60 * 60 * 24;
+	let d = Math.floor(s / sec_per_day);
+
+	let sec_per_week = 60 * 60 * 24 * 7;
+	let w = Math.floor(s / sec_per_week);
+
+	let sec_per_month = 60 * 60 * 24 * 30.4;
+	let M = Math.floor(s / sec_per_month);
+
+	let sec_per_year = 60 * 60 * 24 * 365;
+	let y = Math.floor(s / sec_per_year);
 
 	if (y >= 1) {
-		let sec_per_unit = 60 * 60 * 24 * 365;
-		let next_timeout = sec_per_unit - (s % sec_per_unit) + 1;
-		if (y == 1)
-			return [round_down_to_string(y) + " year", next_timeout, s];
-		if (y > 1)
-			return [round_down_to_string(y) + " years", next_timeout, s];
+		return format_uptime(s, y, sec_per_year, "year", "years");
 	}
-	if (d >= 1) {
-		let sec_per_unit = 60 * 60 * 24;
-		let next_timeout = sec_per_unit - (s % sec_per_unit) + 1;
-		if (d == 1)
-			return [round_down_to_string(d) + " day", next_timeout, s];
-		if (d > 1)
-			return [round_down_to_string(d) + " days", next_timeout, s];
+	if (M >= 2) {
+		return format_uptime(s, M, sec_per_month, "month", "months");
 	}
-	if (h >= 1) {
-		let sec_per_unit = 60 * 60;
-		let next_timeout = sec_per_unit - (s % sec_per_unit) + 1;
-		if (h == 1)
-			return [round_down_to_string(h) + " hour", next_timeout, s];
-		if (h > 1)
-			return [round_down_to_string(h) + " hours", next_timeout, s];
+	if (w >= 2) {
+		return format_uptime(s, w, sec_per_week, "week", "weeks");
 	}
-	if (m >= 1) {
-		let sec_per_unit = 60;
-		let next_timeout = sec_per_unit - (s % sec_per_unit) + 1;
-		if (m == 1)
-			return [round_down_to_string(m) + " minute", next_timeout, s];
-		if (m > 1)
-			return [round_down_to_string(m) + " minutes", next_timeout, s];
+	if (d >= 2) {
+		return format_uptime(s, d, sec_per_day, "day", "days");
+	}
+	if (h >= 2) {
+		return format_uptime(s, h, sec_per_hour, "hour", "hours");
+	}
+	if (m >= 5) {
+		return format_uptime(s, m, sec_per_minute, "minute", "minutes");
 	}
 	if (s >= 1) {
-		if (s == 1)
-			return [round_down_to_string(s) + " second", 1, s];
-		if (s > 1)
-			return [round_down_to_string(s) + " seconds", 1, s];
+		return format_uptime(s, s, 1, "second", "seconds");
 	}
 
 	return ["0", 1, s];
