@@ -1,8 +1,8 @@
 {
-  "name": "uptime",
-  "description": "Shows system uptime",
-  "uuid": "top-bar-uptime",
+  "name": "top-bar-uptime",
+  "description": "Show the system uptime",
+  "uuid": "top-bar-uptime@reubenhwk",
   "shell-version": [
-    "3.36"
+    "48"
   ]
 }

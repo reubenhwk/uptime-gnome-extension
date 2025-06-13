@@ -16,13 +16,16 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 
-/* exported init */
+import GObject from 'gi://GObject';
+import St from 'gi://St';
 
-const St = imports.gi.St;
-const Main = imports.ui.main;
+import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+const ByteArray = imports.byteArray;
 const GLib = imports.gi.GLib;
 const Mainloop = imports.mainloop;
-const ByteArray = imports.byteArray;
 
 var stbin;
 var event_id;
@@ -124,54 +127,49 @@ function human_friendly_uptime() {
 	return ["0", 1, s];
 }
 
-class Extension {
-	constructor() {
-		log('uptime extension constructor');
-	}
+const Indicator = GObject.registerClass(
+class Indicator extends PanelMenu.Button {
+    _init() {
+        super._init(0.0, _('My Shiny Indicator'));
 
-	redraw() {
-		let now = human_friendly_uptime();
-		let uptime = "uptime: " + now[0];
-		log('updating top bar uptime to "' + uptime + '"');
-		stbin.set_child(
-			new St.Label({ text: uptime, style_class: 'uptime-style' })
-		);
-		return now[1];
-	}
+        stbin = new St.Bin({ style_class: 'panel-label' });
+        this.add_child(stbin);
+        let timeout = this.redraw();
+        this.setTimer(timeout);
+    }
 
-	tick() {
-		let timeout = this.redraw();
-		this.setTimer(timeout);
-		return false
-	}
+    tick() {
+        let timeout = this.redraw();
+        this.setTimer(timeout);
+        return false
+    }
 
-	setTimer(timeout) {
-		event_id = Mainloop.timeout_add_seconds(timeout, () => {
-			this.tick();
-		})
-		log('reset timeout to ' + timeout + ' seconds, event ID is ' + event_id);
-	}
+    setTimer(timeout) {
+        event_id = Mainloop.timeout_add_seconds(timeout, () => {
+                this.tick();
+        })
+        log('reset timeout to ' + timeout + ' seconds, event ID is ' + event_id);
+    }
 
-	enable() {
-		log('enabling uptime extension');
-		log('adding uptime st.bin');
-		stbin = new St.Bin({ style_class: 'panel-label' });
-		Main.panel._rightBox.insert_child_at_index(stbin, 0);
-		let timeout = this.redraw();
-		this.setTimer(timeout);
-	}
+    redraw() {
+        let now = human_friendly_uptime();
+        let uptime = "uptime: " + now[0];
+        log('updating top bar uptime to "' + uptime + '"');
+        stbin.set_child(
+            new St.Label({ text: uptime, style_class: 'uptime-style' })
+        );
+        return now[1];
+    }
+});
 
-	disable() {
-		log('disabling uptime extension');
-		log('removing uptime timeout event id ' + event_id);
-		Mainloop.source_remove(event_id);
-		log('removing uptime st.bin');
-		Main.panel._rightBox.remove_child(stbin);
-	}
+export default class IndicatorExampleExtension extends Extension {
+    enable() {
+        this._indicator = new Indicator();
+        Main.panel.addToStatusArea(this.uuid, this._indicator);
+    }
+
+    disable() {
+        this._indicator.destroy();
+        this._indicator = null;
+    }
 }
-
-function init() {
-	log('initializing uptime extention');
-	return new Extension();
-}
-
