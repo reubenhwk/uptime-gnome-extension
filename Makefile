@@ -1,7 +1,7 @@
 
 .PHONY: clean install
 
-EXTNAME = top-bar-uptime
+EXTNAME = top-bar-uptime@reubenhwk
 EXTZIP  = $(EXTNAME).zip
 
 SRC  = $(EXTNAME)/extension.js
@@ -15,8 +15,6 @@ install: $(EXTZIP)
 	gnome-extensions uninstall $(EXTNAME) || true
 	gnome-extensions install --force $(EXTZIP)
 	gnome-extensions enable $(EXTNAME)
-	#gnome-shell --replace
-	#gsettings set org.gnome.shell disable-user-extensions false
 
 clean:
 	rm -f $(EXTZIP)
