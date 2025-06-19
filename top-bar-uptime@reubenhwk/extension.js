@@ -42,10 +42,14 @@ function uptime_in_seconds() {
 function format_uptime(s, v, sec_per_unit, unit, plural_unit) {
 	let next_timeout = sec_per_unit - (s % sec_per_unit);
 	if (v == 1)
-		return [v.toString() + " " + unit, next_timeout, s];
-	return [v.toString() + " " + plural_unit, next_timeout, s];
+		return [v.toString() + " " + unit, next_timeout];
+	return [v.toString() + " " + plural_unit, next_timeout];
 }
 
+// This returns an array.  The first element in the array is a human readable
+// uptime string.  The 2nd element is the number of seconds the string will
+// represent the current uptime.  The caller should schedule itself to be
+// called again when that much time has passed.
 function human_friendly_uptime() {
 	let s = uptime_in_seconds();
 	log("uptime is " + s + " seconds");
@@ -90,7 +94,7 @@ function human_friendly_uptime() {
 		return format_uptime(s, s, 1, "second", "seconds");
 	}
 
-	return ["0", 1, s];
+	return ["0", 1];
 }
 
 const Indicator = GObject.registerClass(
