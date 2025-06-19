@@ -46,6 +46,10 @@ function format_uptime(s, v, sec_per_unit, unit, plural_unit) {
 	return [v.toString() + " " + plural_unit, next_timeout];
 }
 
+function next_time(s, period) {
+	return period - s % period
+}
+
 // This returns an array.  The first element in the array is a human readable
 // uptime string.  The 2nd element is the number of seconds the string will
 // represent the current uptime.  The caller should schedule itself to be
@@ -73,22 +77,22 @@ function human_friendly_uptime() {
 	let y = Math.floor(s / sec_per_year);
 
 	if (y >= 1) {
-		return format_uptime(s, y, sec_per_year, "year", "years");
+		return format_uptime(s, y, next_time(s, sec_per_year), "year", "years");
 	}
 	if (M >= 2) {
-		return format_uptime(s, M, sec_per_month, "month", "months");
+		return format_uptime(s, M, next_time(s, sec_per_month), "month", "months");
 	}
 	if (w >= 2) {
-		return format_uptime(s, w, sec_per_week, "week", "weeks");
+		return format_uptime(s, w, next_time(s, sec_per_week), "week", "weeks");
 	}
 	if (d >= 2) {
-		return format_uptime(s, d, sec_per_day, "day", "days");
+		return format_uptime(s, d, next_time(s, sec_per_day), "day", "days");
 	}
 	if (h >= 2) {
-		return format_uptime(s, h, sec_per_hour, "hour", "hours");
+		return format_uptime(s, h, next_time(s, sec_per_hour), "hour", "hours");
 	}
-	if (m >= 5) {
-		return format_uptime(s, m, sec_per_minute, "minute", "minutes");
+	if (m >= 2) {
+		return format_uptime(s, m, next_time(s, sec_per_minute), "minute", "minutes");
 	}
 	if (s >= 1) {
 		return format_uptime(s, s, 1, "second", "seconds");
