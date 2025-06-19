@@ -143,6 +143,7 @@ export default class UptimeIndicatorExtension extends Extension {
     }
 
     disable() {
+        GLib.source_remove(event_id);
         this._indicator.destroy();
         this._indicator = null;
     }
